@@ -1,13 +1,20 @@
 #include <iostream>
 #include <cmath>
+#include <limits>
+#include <stdexcept>
+#include <concepts>
+
 
 template<typename T>
+concept Arithmetic = std::is_arithmetic_v<T>;
 
+template<Arithmetic T>
 class Complex {
 
 private:
     T real;
     T imag;
+    const double epsilon = 1e-9;
 
 public:
     Complex() : real(0), imag(0) {}
@@ -54,11 +61,12 @@ public:
     }
 
     bool operator==(const Complex<T> &other) const {
-        return (real == other.real) && (imag == other.imag);
+        return (std::abs(real - other.real) < epsilon) &&
+               (std::abs(imag - other.imag) < epsilon);
     }
 
     bool operator==(T num) const {
-        return (real == num) && (imag == 0);
+        return (std::abs(real - num) < epsilon) && (imag == 0);
     }
 
     Complex<T> pow(int n) const {
